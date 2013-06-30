@@ -3,6 +3,25 @@ gwmsh
 
 Ultra-simple gem environment builder.
 
+
+Installation
+------------
+
+This installs to `/usr/local`:
+
+    $ make install
+
+$PREFIX is respected if you want to install somewhere else.
+
+To make the debian packaging slightly easier, the man page is installed
+as a separate task:
+
+    $ make install_docs
+
+As mentioned, a debian package can be built and installed in the usual
+way.
+
+
 Usage
 -----
 
@@ -31,6 +50,7 @@ you cannot move the environment around the filesystem.  It won't work
 when it's at its new location.  However, if you re-run `gemsh` at the
 new location, it'll simply overwrite the paths with the new location so
 you won't have to reinstall all the gems.
+
 
 Author
 ------
