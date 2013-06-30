@@ -1,0 +1,14 @@
+Source: gemsh
+Section: devel
+Priority: extra
+Maintainer: Alex Young <alex@blackkettle.org>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.3
+Homepage: https://github.com/regularfry/gemsh
+
+Package: gemsh
+Architecture: all
+Depends: ${misc:Depends}
+Description: Gem environment generator
+ Generate a self-contained, isolated gem environment for development or 
+ deployment.

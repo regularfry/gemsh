@@ -1,0 +1,72 @@
+#!/bin/bash
+
+#
+# Generates a totally self-contained environment for ruby gems.
+#
+# See man gemsh(1) for more details.
+
+set -e
+set -u
+
+gemenv="${1:-}"
+if [ -z "${gemenv}" ]; then
+  echo "Gem environment location required." >&2
+  exit 1
+fi
+
+mkdir -p "${gemenv}"
+
+abs_gemenv=$(cd "${gemenv}"; pwd)
+bin_path="${abs_gemenv}/bin"
+gem_home_path="${abs_gemenv}/gem_home"
+activate_path="${abs_gemenv}/bin/activate"
+exec_path="${abs_gemenv}/bin/exec"
+
+mkdir -p "${bin_path}"
+mkdir -p "${gem_home_path}"
+
+
+cat <<ACTIVATE > "${activate_path}"
+# This is an activation script, designed to be sourced into a currently-
+# running shell, like so:
+#
+#   $ source "${activate_path}"
+#
+# It sets GEM_HOME, GEM_PATH and PATH for use with the gem environment
+# at ${abs_gemenv} . See man gemsh(1) for more details.
+#
+# The generated paths in this file mean that you can't mv the gemenv
+# from its original location.  If you find you need to do this, you 
+# can re-run gemenv on the new location without harming gems that might
+# have been installed into the gemenv.
+#
+# Oh, and you probably want ${exec_path}, not this script.
+
+
+if [ -n "\$GEM_HOME" ]; then
+  unset GEM_HOME
+fi
+
+# Pick VIRTUAL_ENV in \$PS1 if you want
+export VIRTUAL_ENV="${gemenv}"
+export GEMENV="${abs_gemenv}"
+export GEM_HOME="\${GEMENV}/gem_home"
+export GEM_PATH=\$(gem env home)
+export PATH="\$GEM_HOME/bin:\$PATH"
+
+
+if [ -n "\$BASH" -o -n "\$ZSH_VERSION" ] ; then
+    hash -r 2> /dev/null
+fi
+ACTIVATE
+
+
+cat <<EXEC > "${exec_path}"
+#!/bin/bash
+
+source "${activate_path}" 
+
+exec "\$@"
+EXEC
+
+chmod +x "${exec_path}"
