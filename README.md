@@ -1,4 +1,4 @@
-gwmsh
+gemsh
 =====
 
 Ultra-simple gem environment builder.
